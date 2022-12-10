@@ -1,0 +1,29 @@
+{% include "header.html" %}
+    <div>
+        <h1>{{ session["user"]["first_name"] }}'s Order History:</h1>
+
+        {% if orders is defined %}
+            {% for order in orders %}
+                <p>Order History <b>{{order["orderdate"].strftime('%Y-%m-%d')}}</b></p>
+                <table>
+                        <tr><th>Name</th><th>Quantity</th><th>Subtotal</th></tr>
+                    {% set total = {'value': 0} %}
+                    {% for item in order["details"]%}
+                        <tr>
+                            <td>{{ item["name"] }}</td>
+                            <td>{{ item["qty"] }}</td>
+                            <td>{{ item["subtotal"] }}</td>
+                            {% if total.update({"value": item["subtotal"]|int + total.value|int }) %} {% endif %}
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td>Total</td>
+                        <td><b>{{total.value}}</b></td>
+                    </tr>
+                </table>
+            {% endfor %}
+        {% else %}
+            <p> No orders have been made yet. <a href="/products">Place an order.</a></p>
+        {% endif %}
+    </div>
+{% include "footer.html" %}
